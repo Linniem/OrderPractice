@@ -15,6 +15,10 @@
             width: 50px;
             height: 50px;
         }
+
+        td > p{
+            color: deepskyblue;
+        }
     </style>
 </head>
 
@@ -39,7 +43,7 @@
                     {{item.orderId}}
                 </td>
                 <td>
-                    <a href="#">{{item.productName}}</a>
+                    <p v-on:click="GetProductInfo(item.productName)">{{item.productName}}</p>
                 </td>
                 <td>
                     {{item.price}}
@@ -53,6 +57,27 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- Modal -->
+    <div class="modal fade" id="BootstrapModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{product.productName}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ID in DB : {{product.productId}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="justify-content-center d-flex">
         <div id="cofirmButton" type="button" class="btn btn-primary">Confirm</div>
@@ -73,7 +98,9 @@
 
     <script>
         var VUE_MODEL;
+        var BOOTSTRAP_VUE_MODEL;
         var ORDERS_JSON;
+        var PRODUCT_JSON = { 'productId': '0', 'productName': 'productName' };
 
         $(document).ready(function () {
             $.ajax({
@@ -95,6 +122,26 @@
                 {
                     el: '#ordersTable',
                     data: { items: ORDERS_JSON },
+                    methods: {
+                        GetProductInfo: function (productName) {
+                            $.ajax({
+                                type: 'GET',
+                                url: `/api/Products/${productName}`,
+                                dataType: 'json',
+                                success: function (response) {
+                                    BOOTSTRAP_VUE_MODEL.$data.product = response;
+                                    $('#BootstrapModal').modal('show');
+                                }
+                            });
+                        }
+                    }
+                }
+            )
+
+            BOOTSTRAP_VUE_MODEL = new Vue(
+                {
+                    el: '#BootstrapModal',
+                    data: { product: PRODUCT_JSON }
                 }
             )
         }

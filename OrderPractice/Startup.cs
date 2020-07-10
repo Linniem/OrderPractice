@@ -37,10 +37,14 @@ namespace OrderPractice
             services.AddControllersWithViews().AddNewtonsoftJson();
 
             services.AddDbContext<OrderPracticeContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("OrderPracticeContextDocker")));
+                    options.UseSqlServer(Configuration.GetConnectionString("OrderPracticeContext")));
 
             services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IProductService, ProductService>();
+
             services.AddTransient<IViewModelConverter,ViewModelConverter>();
         }
 
