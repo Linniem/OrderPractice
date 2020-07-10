@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using OrderPractice.Data;
 using OrderPractice.Repositories;
 using OrderPractice.Services;
+using OrderPractice.Helpers;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
 
@@ -36,10 +37,11 @@ namespace OrderPractice
             services.AddControllersWithViews().AddNewtonsoftJson();
 
             services.AddDbContext<OrderPracticeContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("OrderPracticeContext")));
+                    options.UseSqlServer(Configuration.GetConnectionString("OrderPracticeContextDocker")));
 
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IViewModelConverter,ViewModelConverter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

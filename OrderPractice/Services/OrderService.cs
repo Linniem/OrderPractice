@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OrderPractice.Models;
 using OrderPractice.Repositories;
 using OrderPractice.ViewModels;
+using OrderPractice.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,23 +13,17 @@ namespace OrderPractice.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository repo;
-
-        public OrderService(IOrderRepository orderRepository)
+        private readonly IViewModelConverter vmConverter;
+        public OrderService(IOrderRepository orderRepository,IViewModelConverter vmConverter)
         {
             repo = orderRepository;
+            this.vmConverter = vmConverter;
         }
 
-        public async Task<List<Order>> GetAllOrderAsync()
+        public async Task<IEnumerable<OrderVm>> GetAllOrderVmAsync()
         {
-            //var orders = await repo.GetAllAsync();
-            //return ConvertToViewModel(orders);
-
-            return await repo.GetAllAsync();
-        }
-
-        public async Task<List<OrderVm>> GetAllOrderVmAsync()
-        {
-            return await repo.GetAllVmAsync();
+            var allOrders = await repo.GetAllAsyc();
+            return vmConverter.OrderConvertAll(allOrders);
         }
 
         public async Task<Order> GetOrderAsync(string orderId)
@@ -38,7 +33,8 @@ namespace OrderPractice.Services
 
         public async Task<OrderVm> GetOrderVmAsync(string orderId)
         {
-            return await repo.GetVmAsync(orderId);
+            var order = await repo.GetAsync(orderId);
+            return vmConverter.OrderConvertOne(order);
         }
 
         public async Task<IActionResult> UpdateOrder(JsonPatchDocument<Order> patchDoc, string id)
@@ -46,47 +42,11 @@ namespace OrderPractice.Services
             var order = await GetOrderAsync(id);
             patchDoc.ApplyTo(order);
 
-            await repo.Update(order);
+            await repo.UpdateAsync(order);
 
             var newOrderVm = await GetOrderVmAsync(id);
 
             return new ObjectResult(newOrderVm);
-        }
-
-        // unused below
-        private List<OrderVm> ConvertToViewModel(IEnumerable<Order> orders)
-        {
-            var orderVmList = new List<OrderVm>();
-            foreach (var order in orders)
-            {
-                var newOrderVm = new OrderVm()
-                {
-                    ProductName = order.Product.ProductName,
-                    StatusName = order.Status.StatusName
-                };
-                CopyProperties(order, newOrderVm);
-                orderVmList.Add(newOrderVm);
-            }
-            return orderVmList;
-        }
-
-        private void CopyProperties<T, TU>(T source, TU dest)
-        {
-            var sourceProps = typeof(T).GetProperties().Where(x => x.CanRead).ToList();
-            var destProps = typeof(TU).GetProperties().Where(x => x.CanWrite).ToList();
-
-            foreach (var sourceProp in sourceProps)
-            {
-                if (destProps.Any(x => x.Name == sourceProp.Name))
-                {
-                    var p = destProps.First(x => x.Name == sourceProp.Name);
-                    if (p.CanWrite)
-                    {
-                        // check if the property can be set or no.
-                        p.SetValue(dest, sourceProp.GetValue(source, null), null);
-                    }
-                }
-            }
         }
     }
 }

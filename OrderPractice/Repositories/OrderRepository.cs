@@ -11,31 +11,18 @@ namespace OrderPractice.Repositories
     public class OrderRepository : IOrderRepository
     {
         private readonly OrderPracticeContext dbContext;
-
         public OrderRepository(OrderPracticeContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public async Task<List<Order>> GetAllAsync()
+        public async Task<IEnumerable<Order>> GetAllAsyc()
         {
-            return await dbContext.Orders.Include("Product").Include("Status").ToListAsync();
-        }
-
-        public async Task<List<OrderVm>> GetAllVmAsync()
-        {
-            return await (from o in dbContext.Orders
-                          join p in dbContext.Products on o.OrderProductId equals p.ProductId
-                          join s in dbContext.Statuses on o.StatusCode equals s.StatusId
-                          select new OrderVm
-                          {
-                              OrderId = o.OrderId,
-                              Price = o.Price,
-                              Cost = o.Cost,
-                              ProductName = p.ProductName,
-                              StatusCode = o.StatusCode,
-                              StatusName = s.StatusName
-                          }).ToListAsync();
+            return await dbContext.Orders
+                .Include("Product")
+                .Include("Status")
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Order> GetAsync(string id)
@@ -43,24 +30,7 @@ namespace OrderPractice.Repositories
             return await dbContext.Orders.Include("Status").FirstOrDefaultAsync(x => x.OrderId == id);
         }
 
-        public async Task<OrderVm> GetVmAsync(string id)
-        {
-            return await (from o in dbContext.Orders
-                          join p in dbContext.Products on o.OrderProductId equals p.ProductId
-                          join s in dbContext.Statuses on o.StatusCode equals s.StatusId
-                          where o.OrderId == id
-                          select new OrderVm
-                          {
-                              OrderId = o.OrderId,
-                              Price = o.Price,
-                              Cost = o.Cost,
-                              ProductName = p.ProductName,
-                              StatusCode = o.StatusCode,
-                              StatusName = s.StatusName
-                          }).FirstAsync();
-        }
-
-        public async Task Update(Order order)
+        public async Task UpdateAsync(Order order)
         {
             dbContext.Entry(order).State = EntityState.Modified;
             await dbContext.SaveChangesAsync();

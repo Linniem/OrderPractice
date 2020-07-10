@@ -20,9 +20,9 @@ namespace OrderPractice.Controllers
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<List<OrderVm>>> GetOrder()
+        public async Task<ActionResult<IEnumerable<OrderVm>>> GetOrder()
         {
-            return await orderService.GetAllOrderVmAsync();
+            return Ok(await orderService.GetAllOrderVmAsync());
         }
 
         // GET: api/Orders/5
@@ -34,7 +34,6 @@ namespace OrderPractice.Controllers
             {
                 return NotFound();
             }
-
             return orderVm;
         }
 
