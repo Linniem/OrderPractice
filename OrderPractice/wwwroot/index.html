@@ -72,8 +72,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
 
     <script>
-        var vm;
-        var jsonOrders;
+        var VUE_MODEL;
+        var ORDERS_JSON;
 
         $(document).ready(function () {
             $.ajax({
@@ -81,40 +81,40 @@
                 url: '/api/Orders',
                 dataType: 'json',
                 success: function (response) {
-                    jsonOrders = response;
+                    ORDERS_JSON = response;
 
-                    DataBiding();
-                    AddConfirmEvent();
+                    BindVueModel();
+                    AddConfirmBtEvent();
                 }
             });
 
         });
 
-        function DataBiding() {
-            vm = new Vue(
+        function BindVueModel() {
+            VUE_MODEL = new Vue(
                 {
                     el: '#ordersTable',
-                    data: { items: jsonOrders },
+                    data: { items: ORDERS_JSON },
                 }
             )
         }
 
-        function AddConfirmEvent() {
+        function AddConfirmBtEvent() {
             $('#cofirmButton').click(() => {
-                let patchQueue = GetConfirmDatas();
+                let patchQueue = GetCheckedDatas();
                 SendAjaxRecursion(patchQueue);
             })
         }
 
         function SendAjaxRecursion(patchQueue) {
-            let currentOrderId = patchQueue.shift();
-            let vueItem = vm.$data.items.find(ele => ele.orderId == currentOrderId);
+            let patchOrderId = patchQueue.shift();
+            let vueItem = VUE_MODEL.$data.items.find(ele => ele.orderId == patchOrderId);
 
             let newStatusCode = 1;
             if (vueItem.statusCode == 1) {
                 newStatusCode = 2;
             }
-            let patch = [
+            let patchJsonData = [
                 {
                     'op': 'replace',
                     'path': '/StatusCode',
@@ -125,14 +125,14 @@
 
             $.ajax({
                 type: 'PATCH',
-                url: `/api/Orders/update/${currentOrderId}`,
-                data: JSON.stringify(patch),
+                url: `/api/Orders/update/${patchOrderId}`,
+                data: JSON.stringify(patchJsonData),
                 processData: false,
                 contentType: 'application/merge-patch+json',
                 success: function (response) {
                     vueItem.statusName = response.statusName;
                     vueItem.statusCode = response.statusCode;
-                    document.querySelector(`#${currentOrderId}`).checked = false;
+                    document.querySelector(`#${patchOrderId}`).checked = false;
 
                     if (patchQueue.length > 0) {
                         SendAjaxRecursion(patchQueue);
@@ -141,11 +141,11 @@
             });
         }
 
-        function GetConfirmDatas() {
+        function GetCheckedDatas() {
             let patchQueue = [];
-            [...$('input')].forEach(element => {
-                if (element.checked) {
-                    patchQueue.push(element.value);
+            [...$('input')].forEach(checkBox => {
+                if (checkBox.checked) {
+                    patchQueue.push(checkBox.value);
                 }
             });
             return patchQueue;
