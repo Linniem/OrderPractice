@@ -2,7 +2,6 @@
 using OrderPractice.Data;
 using OrderPractice.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace OrderPractice.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<Product> Find(Expression<Func<Product, bool>> predicate)
+        public async Task<Product> FindAsync(Expression<Func<Product, bool>> predicate)
         {
             return await dbContext.Products.Where(predicate).FirstOrDefaultAsync();
         }

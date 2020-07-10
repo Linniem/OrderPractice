@@ -1,5 +1,4 @@
-﻿
-namespace OrderPractice.ViewModels
+﻿namespace OrderPractice.ViewModels
 {
     public class OrderVm
     {

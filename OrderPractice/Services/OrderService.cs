@@ -5,8 +5,8 @@ using OrderPractice.Repositories;
 using OrderPractice.ViewModels;
 using OrderPractice.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace OrderPractice.Services
 {
@@ -22,7 +22,7 @@ namespace OrderPractice.Services
 
         public async Task<IEnumerable<OrderVm>> GetAllOrderVmAsync()
         {
-            var allOrders = await repo.GetAllAsyc();
+            var allOrders = await repo.GetAll().ToListAsync();
             return vmConverter.OrderConvertAll(allOrders);
         }
 
@@ -37,16 +37,14 @@ namespace OrderPractice.Services
             return vmConverter.OrderConvertOne(order);
         }
 
-        public async Task<IActionResult> UpdateOrder(JsonPatchDocument<Order> patchDoc, string id)
+        public async Task<IActionResult> UpdateOrderAsync(JsonPatchDocument<Order> patchDoc, string id)
         {
             var order = await GetOrderAsync(id);
             patchDoc.ApplyTo(order);
 
             await repo.UpdateAsync(order);
 
-            var newOrderVm = await GetOrderVmAsync(id);
-
-            return new ObjectResult(newOrderVm);
+            return new ObjectResult(await GetOrderVmAsync(id));
         }
     }
 }

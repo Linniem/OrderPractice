@@ -12,6 +12,6 @@ namespace OrderPractice.Services
         public Task<IEnumerable<OrderVm>> GetAllOrderVmAsync();
         public Task<Order> GetOrderAsync(string orderId);
         public Task<OrderVm> GetOrderVmAsync(string orderId);
-        public Task<IActionResult> UpdateOrder(JsonPatchDocument<Order> patchDoc, string id);
+        public Task<IActionResult> UpdateOrderAsync(JsonPatchDocument<Order> patchDoc, string id);
     }
 }

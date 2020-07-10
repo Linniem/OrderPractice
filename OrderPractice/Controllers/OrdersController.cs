@@ -25,7 +25,7 @@ namespace OrderPractice.Controllers
             return Ok(await orderService.GetAllOrderVmAsync());
         }
 
-        // GET: api/Orders/5
+        // GET: api/Orders/A20202026001
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderVm>> GetOrder(string id)
         {
@@ -43,80 +43,12 @@ namespace OrderPractice.Controllers
         {
             if (patchDoc != null)
             {
-                return await orderService.UpdateOrder(patchDoc, id);
+                return await orderService.UpdateOrderAsync(patchDoc, id);
             }
             else
             {
                 return BadRequest(ModelState);
             }
         }
-
-        #region scaffolding
-        //// PUT: api/Orders/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to, for
-        //// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutOrder(string id, Order order)
-        //{
-        //    if (id != order.OrderId)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    dbContext.Entry(order).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await dbContext.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!OrderExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        //// POST: api/Orders
-        //// To protect from overposting attacks, enable the specific properties you want to bind to, for
-        //// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        //[HttpPost]
-        //public async Task<ActionResult<Order>> PostOrder(Order order)
-        //{
-        //    dbContext.Orders.Add(order);
-        //    await dbContext.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
-        //}
-
-        //// DELETE: api/Orders/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Order>> DeleteOrder(string id)
-        //{
-        //    var order = await dbContext.Orders.FindAsync(id);
-        //    if (order == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    dbContext.Orders.Remove(order);
-        //    await dbContext.SaveChangesAsync();
-
-        //    return order;
-        //}
-
-
-        //private bool OrderExists(string id)
-        //{
-        //    return dbContext.Orders.Any(e => e.OrderId == id);
-        //}
-        #endregion
     }
 }

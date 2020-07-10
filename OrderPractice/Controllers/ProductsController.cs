@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OrderPractice.Data;
 using OrderPractice.Models;
 using OrderPractice.Services;
 
@@ -25,7 +19,7 @@ namespace OrderPractice.Controllers
         [HttpGet("{productName}")]
         public async Task<ActionResult<Product>> GetProduct(string productName)
         {
-            return await productService.FindProduct(productName);
+            return await productService.FindProductAsync(productName);
         }
     }
 }

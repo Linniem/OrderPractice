@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OrderPractice.Models;
 using OrderPractice.Repositories;
 
@@ -15,9 +12,9 @@ namespace OrderPractice.Services
             this.repo = repo;
         }
 
-        public async Task<Product> FindProduct(string productName)
+        public async Task<Product> FindProductAsync(string productName)
         {
-            return await repo.Find(x => x.ProductName == productName);
+            return await repo.FindAsync(x => x.ProductName == productName);
         }
     }
 }

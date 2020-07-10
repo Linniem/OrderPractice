@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OrderPractice.Data;
 using OrderPractice.Models;
-using OrderPractice.ViewModels;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,13 +14,12 @@ namespace OrderPractice.Repositories
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Order>> GetAllAsyc()
+        public IQueryable<Order> GetAll()
         {
-            return await dbContext.Orders
+            return dbContext.Orders
                 .Include("Product")
                 .Include("Status")
-                .AsNoTracking()
-                .ToListAsync();
+                .AsNoTracking();
         }
 
         public async Task<Order> GetAsync(string id)
