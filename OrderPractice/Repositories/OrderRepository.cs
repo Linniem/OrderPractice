@@ -27,7 +27,10 @@ namespace OrderPractice.Repositories
 
         public async Task<Order> GetAsync(string id)
         {
-            return await dbContext.Orders.Include("Status").FirstOrDefaultAsync(x => x.OrderId == id);
+            return await dbContext.Orders
+                .Include("Product")
+                .Include("Status")
+                .FirstOrDefaultAsync(x => x.OrderId == id);
         }
 
         public async Task UpdateAsync(Order order)
